@@ -8,6 +8,14 @@
 
 The **MT5 to Match-Trader Trade Copier** is a professional-grade, production-ready Python application that seamlessly replicates trading signals from MetaTrader 5 (MT5) accounts to Match-Trader prop firm accounts via WebSocket API. Built with enterprise-level reliability, this application operates 24/7 with minimal human intervention.
 
+### 🌟 What's New
+
+- **Advanced Symbol Mapping**: Intelligent symbol conversion with automatic suffix handling
+- **Resilient Retry System**: Circuit breaker pattern and exponential backoff for robust operations
+- **Comprehensive Test Coverage**: 33 tests ensuring reliability across all modules
+- **Performance Analytics**: Real-time trade metrics and system health monitoring
+- **Enhanced Error Handling**: Self-healing capabilities with intelligent retry mechanisms
+
 |### 🎯 Key Features
 |
 |- **Real-time Trade Replication**: Instant copying of trades from MT5 to Match-Trader accounts
@@ -213,6 +221,36 @@ Configure real-time notifications:
 3. **Symbol Not Found**
    - Update symbol mapping in config
    - Check allowed symbols list
+
+## 🎆 Core Modules
+
+### Symbol Mapper
+Intelligent symbol conversion between MT5 and Match-Trader platforms:
+- **Automatic Suffix Removal**: Handles .z, .a, .m, .pro, .ecn, .raw suffixes
+- **Custom Mapping**: Define specific symbol conversions (e.g., XAUUSD → GOLD)
+- **Symbol Validation**: Ensures only valid symbols are processed
+- **Bidirectional Mapping**: Convert symbols in both directions
+
+### Retry Manager
+Advanced resilience system with:
+- **Exponential Backoff**: Progressively increasing delays between retries
+- **Circuit Breaker**: Prevents cascading failures by temporarily disabling failing operations
+- **Jitter Support**: Adds randomness to prevent thundering herd problems
+- **Decorator Pattern**: Easy integration with existing functions
+
+### Trade Analytics
+Comprehensive performance tracking:
+- **Win Rate Calculation**: Track success percentage of trades
+- **Profit/Loss Analysis**: Detailed P&L metrics
+- **Trade History**: Complete record of all trades
+- **Performance Reports**: Generate trading statistics
+
+### Health Monitor
+System monitoring and diagnostics:
+- **Resource Usage**: CPU and memory monitoring
+- **Connection Status**: Track all active connections
+- **Performance Metrics**: Latency and throughput measurements
+- **Alert System**: Proactive issue detection
 
 ## 📁 Project Structure
 
