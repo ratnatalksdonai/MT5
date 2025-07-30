@@ -1,0 +1,66 @@
+{
+  "mt5_accounts": [
+    {
+      "account_id": "12345678",
+      "server": "MetaQuotes-Demo",
+      "login": "username",
+      "password": "password",
+      "terminal_path": "C:\\Program Files\\MetaTrader 5\\terminal64.exe"
+    }
+  ],
+  "matchtrade_accounts": [
+    {
+      "account_id": "MT-12345",
+      "broker_id": "FTUK",
+      "base_url": "wss://api.ftuk.com/ws",
+      "api_key": "your_api_key",
+      "secret": "your_secret"
+    }
+  ],
+  "trade_settings": {
+    "lot_size_mode": "proportional",
+    "lot_multiplier": 1.0,
+    "max_lot_size": 10.0,
+    "min_lot_size": 0.01,
+    "symbol_mapping": {
+      "EURUSD.z": "EURUSD",
+      "GBPUSD.z": "GBPUSD",
+      "USDJPY.z": "USDJPY",
+      "AUDUSD.z": "AUDUSD",
+      "USDCAD.z": "USDCAD",
+      "XAUUSD.z": "XAUUSD"
+    },
+    "allowed_symbols": ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "XAUUSD"],
+    "copy_pending_orders": false,
+    "copy_sl_tp": true
+  },
+  "notifications": {
+    "enabled": true,
+    "webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/URL",
+    "telegram_bot_token": "YOUR_BOT_TOKEN",
+    "telegram_chat_id": "YOUR_CHAT_ID",
+    "email": {
+      "enabled": false,
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "sender": "your-email@gmail.com",
+      "password": "your-app-password",
+      "recipients": ["recipient@example.com"]
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "file_path": "logs/trade_copier.log",
+    "max_file_size_mb": 100,
+    "backup_count": 10,
+    "console_output": true
+  },
+  "performance": {
+    "max_latency_ms": 100,
+    "health_check_interval_seconds": 60,
+    "connection_timeout_seconds": 30,
+    "heartbeat_interval_seconds": 30,
+    "retry_max_attempts": 5,
+    "retry_delay_seconds": 5
+  }
+}

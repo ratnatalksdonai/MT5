@@ -1,0 +1,1 @@
+{"app_name": "MT5_Match_Trader_Trade_Copier","services": [{"name": "TradeCopierService","description": "Service to run the MT5 to Match-Trader trade copier.","exec_start": "C:\\Users\\ratna\\OneDrive\\Desktop\\MT5\\MT5\\run.bat","working_directory": "C:\\Users\\ratna\\OneDrive\\Desktop\\MT5\\MT5"}]}
