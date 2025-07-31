@@ -15,6 +15,7 @@ The **MT5 to Match-Trader Trade Copier** is a professional-grade, production-rea
 - **Comprehensive Test Coverage**: 33 tests ensuring reliability across all modules
 - **Performance Analytics**: Real-time trade metrics and system health monitoring
 - **Enhanced Error Handling**: Self-healing capabilities with intelligent retry mechanisms
+- **Fixed Installation Issue**: Resolved requirements.txt syntax errors affecting dependency installation
 
 |### 🎯 Key Features
 |
