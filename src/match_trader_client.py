@@ -12,6 +12,7 @@ import logging
 import time
 from typing import Optional, Dict, Any
 from datetime import datetime
+from .matchtrade_auth import MatchTradeAuthenticator
 
 
 class MatchTraderClient:

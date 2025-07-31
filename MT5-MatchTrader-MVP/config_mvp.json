@@ -1,0 +1,81 @@
+{
+  "mt5_accounts": [
+    {
+      "account_id": "mt5_main",
+      "login": 12345678,
+      "password": "your_mt5_password",
+      "server": "YourBroker-Server"
+    }
+  ],
+  "matchtrade_accounts": [
+    {
+      "account_id": "e8_account_1",
+      "account_number": "E8-123456",
+      "username": "your_email@example.com",
+      "password": "your_matchtrade_password",
+      "broker_name": "e8markets"
+    },
+    {
+      "account_id": "topone_account_1", 
+      "account_number": "TOP-789012",
+      "username": "your_email@example.com",
+      "password": "your_matchtrade_password",
+      "broker_name": "toponetrader"
+    }
+  ],
+  "trade_settings": {
+    "lot_size_mode": "proportional",
+    "lot_multiplier": 1.0,
+    "check_interval": 1.0,
+    "max_retries": 3,
+    "max_slippage": 2.0,
+    "symbol_mapping": {
+      "EURUSD.z": "EURUSD",
+      "GBPUSD.z": "GBPUSD",
+      "XAUUSD": "GOLD",
+      "US30": "US30",
+      "NAS100": "US100",
+      "USDJPY.z": "USDJPY",
+      "AUDUSD.z": "AUDUSD",
+      "USDCAD.z": "USDCAD",
+      "USDCHF.z": "USDCHF",
+      "GBPJPY.z": "GBPJPY",
+      "EURJPY.z": "EURJPY",
+      "EURGBP.z": "EURGBP"
+    }
+  },
+  "broker_endpoints": {
+    "e8markets": {
+      "base_url": "https://platform.e8markets.com",
+      "auth_endpoint": "/api/auth/login",
+      "orders_endpoint": "/api/orders",
+      "account_endpoint": "/api/account/info",
+      "positions_endpoint": "/api/positions"
+    },
+    "toponetrader": {
+      "base_url": "https://platform.toponetrader.com",
+      "auth_endpoint": "/api/auth/login",
+      "orders_endpoint": "/api/orders",
+      "account_endpoint": "/api/account/info",
+      "positions_endpoint": "/api/positions"
+    },
+    "ftmo": {
+      "base_url": "https://platform.ftmo.com",
+      "auth_endpoint": "/api/auth/login",
+      "orders_endpoint": "/api/orders",
+      "account_endpoint": "/api/account/info",
+      "positions_endpoint": "/api/positions"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "file_path": "logs/trade_copier.log",
+    "max_file_size_mb": 50,
+    "backup_count": 5
+  },
+  "notifications": {
+    "slack_webhook": "",
+    "telegram_bot_token": "",
+    "telegram_chat_id": ""
+  }
+}

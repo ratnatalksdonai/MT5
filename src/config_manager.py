@@ -33,8 +33,9 @@ class MatchTradeAccountConfig(BaseModel):
     account_id: str
     broker_id: str
     base_url: str
-    api_key: str
-    secret: str
+    username: str
+    password: str
+    account_number: str
 
 
 class TradeSettingsConfig(BaseModel):
@@ -142,15 +143,11 @@ class ConfigManager:
                 encrypted_value = mt5_account["password"][10:]  # Remove 'encrypted:' prefix
                 mt5_account["password"] = self._fernet.decrypt(encrypted_value.encode()).decode()
 
-        # Decrypt Match-Trader API keys and secrets
+        # Decrypt Match-Trader passwords
         for mt_account in config_data.get("matchtrade_accounts", []):
-            if "api_key" in mt_account and mt_account["api_key"].startswith("encrypted:"):
-                encrypted_value = mt_account["api_key"][10:]
-                mt_account["api_key"] = self._fernet.decrypt(encrypted_value.encode()).decode()
-
-            if "secret" in mt_account and mt_account["secret"].startswith("encrypted:"):
-                encrypted_value = mt_account["secret"][10:]
-                mt_account["secret"] = self._fernet.decrypt(encrypted_value.encode()).decode()
+            if "password" in mt_account and mt_account["password"].startswith("encrypted:"):
+                encrypted_value = mt_account["password"][10:]
+                mt_account["password"] = self._fernet.decrypt(encrypted_value.encode()).decode()
 
         return config_data
 
@@ -167,15 +164,11 @@ class ConfigManager:
                 encrypted_password = self._fernet.encrypt(mt5_account["password"].encode()).decode()
                 mt5_account["password"] = f"encrypted:{encrypted_password}"
 
-        # Encrypt Match-Trader API keys and secrets
+        # Encrypt Match-Trader passwords
         for mt_account in encrypted_config.get("matchtrade_accounts", []):
-            if "api_key" in mt_account and not mt_account["api_key"].startswith("encrypted:"):
-                encrypted_key = self._fernet.encrypt(mt_account["api_key"].encode()).decode()
-                mt_account["api_key"] = f"encrypted:{encrypted_key}"
-
-            if "secret" in mt_account and not mt_account["secret"].startswith("encrypted:"):
-                encrypted_secret = self._fernet.encrypt(mt_account["secret"].encode()).decode()
-                mt_account["secret"] = f"encrypted:{encrypted_secret}"
+            if "password" in mt_account and not mt_account["password"].startswith("encrypted:"):
+                encrypted_password = self._fernet.encrypt(mt_account["password"].encode()).decode()
+                mt_account["password"] = f"encrypted:{encrypted_password}"
 
         return encrypted_config
 
@@ -269,8 +262,9 @@ def create_sample_config(output_path: str = "config.json"):
                 "account_id": "MT-12345",
                 "broker_id": "FTUK",
                 "base_url": "wss://api.ftuk.com/ws",
-                "api_key": "your_api_key",
-                "secret": "your_secret",
+                "username": "your_username",
+                "password": "your_password",
+                "account_number": "your_account_number",
             }
         ],
         "trade_settings": {
