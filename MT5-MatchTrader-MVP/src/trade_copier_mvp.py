@@ -78,16 +78,34 @@ class TradeCopierMVP:
     async def stop_copying(self):
         pass  # Implement stop logic
 
-    async def authenticate_all_accounts(self, session):
-        for client in self.match_trader_clients:
-            await client.authenticate(session)
+    async def authenticate_all_accounts(self, session) -> bool:
+        results = await asyncio.gather(*[client.authenticate(session) for client in self.match_trader_clients])
+        return all(results)
 
     async def monitor_mt5_positions(self):
         await self.mt5_connector.connect_async()
         await self.mt5_connector.monitor_positions()
 
-    async def replicate_trade(self, signal, clients):
-        pass  # Implement trade replication
+    async def replicate_trade(self, signal, clients, session=None):
+        if not session:
+            return None
+        
+        tasks = []
+        for client in clients:
+            mapped_symbol = self.symbol_mapper.map_symbol(signal.get('symbol'))
+            if mapped_symbol:
+                order_details = {
+                    'symbol': mapped_symbol,
+                    'volume': signal['volume'],
+                    'type': signal['type']
+                }
+                tasks.append(client.place_order(session, order_details))
+        
+        if not tasks:
+            return None
+            
+        results = await asyncio.gather(*tasks)
+        return results
 
     async def handle_connection_errors(self):
         pass  # Implement error handling

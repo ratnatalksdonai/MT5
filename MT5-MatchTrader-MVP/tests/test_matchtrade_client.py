@@ -51,7 +51,8 @@ class TestMatchTraderClient:
         mock_response.status = 401
         mock_response.json = AsyncMock(return_value={'error': 'Invalid credentials'})
         
-        with patch('aiohttp.ClientSession.post', return_value=mock_response):
+        mock_post = AsyncMock(return_value=mock_response)
+        with patch('aiohttp.ClientSession.post', mock_post):
             async with aiohttp.ClientSession() as session:
                 result = await client.authenticate(session)
                 assert result == False
@@ -70,7 +71,8 @@ class TestMatchTraderClient:
             'expires_in': 3600
         })
         
-        with patch('aiohttp.ClientSession.post', return_value=mock_response):
+        mock_post = AsyncMock(return_value=mock_response)
+        with patch('aiohttp.ClientSession.post', mock_post):
             async with aiohttp.ClientSession() as session:
                 result = await client.refresh_token(session)
                 assert result == True
@@ -91,7 +93,8 @@ class TestMatchTraderClient:
             'volume': 0.1
         })
         
-        with patch('aiohttp.ClientSession.post', return_value=mock_response):
+        mock_post = AsyncMock(return_value=mock_response)
+        with patch('aiohttp.ClientSession.post', mock_post):
             async with aiohttp.ClientSession() as session:
                 result = await client.place_order(session, {
                     'symbol': 'EURUSD',
@@ -117,7 +120,8 @@ class TestMatchTraderClient:
             'volume': 0.2
         })
         
-        with patch('aiohttp.ClientSession.post', return_value=mock_response):
+        mock_post = AsyncMock(return_value=mock_response)
+        with patch('aiohttp.ClientSession.post', mock_post):
             async with aiohttp.ClientSession() as session:
                 result = await client.place_order(session, {
                     'symbol': 'GBPUSD',
@@ -137,7 +141,8 @@ class TestMatchTraderClient:
         mock_response.status = 401
         mock_response.json = AsyncMock(return_value={'error': 'Unauthorized'})
         
-        with patch('aiohttp.ClientSession.post', return_value=mock_response):
+        mock_post = AsyncMock(return_value=mock_response)
+        with patch('aiohttp.ClientSession.post', mock_post):
             async with aiohttp.ClientSession() as session:
                 result = await client.place_order(session, {
                     'symbol': 'EURUSD',
@@ -160,7 +165,8 @@ class TestMatchTraderClient:
             'margin': 1000.0
         })
         
-        with patch('aiohttp.ClientSession.get', return_value=mock_response):
+        mock_get = AsyncMock(return_value=mock_response)
+        with patch('aiohttp.ClientSession.get', mock_get):
             async with aiohttp.ClientSession() as session:
                 info = await client.get_account_info(session)
                 assert info['account_number'] == 'E8-123456'
@@ -185,7 +191,8 @@ class TestMatchTraderClient:
             ]
         })
         
-        with patch('aiohttp.ClientSession.get', return_value=mock_response):
+        mock_get = AsyncMock(return_value=mock_response)
+        with patch('aiohttp.ClientSession.get', mock_get):
             async with aiohttp.ClientSession() as session:
                 positions = await client.get_positions(session)
                 assert len(positions) == 1
@@ -204,7 +211,8 @@ class TestMatchTraderClient:
             'position_id': '123'
         })
         
-        with patch('aiohttp.ClientSession.post', return_value=mock_response):
+        mock_post = AsyncMock(return_value=mock_response)
+        with patch('aiohttp.ClientSession.post', mock_post):
             async with aiohttp.ClientSession() as session:
                 result = await client.close_position(session, '123')
                 assert result['status'] == 'closed'
@@ -233,7 +241,8 @@ class TestMatchTraderClient:
         mock_response.status = 429
         mock_response.headers = {'Retry-After': '60'}
         
-        with patch('aiohttp.ClientSession.post', return_value=mock_response):
+        mock_post = AsyncMock(return_value=mock_response)
+        with patch('aiohttp.ClientSession.post', mock_post):
             async with aiohttp.ClientSession() as session:
                 result = await client.place_order(session, {
                     'symbol': 'EURUSD',
