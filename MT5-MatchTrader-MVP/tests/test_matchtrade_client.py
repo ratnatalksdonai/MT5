@@ -34,8 +34,11 @@ class TestMatchTraderClient:
             'access_token': 'test_token_123',
             'expires_in': 3600
         })
+        mock_response.__aenter__.return_value = mock_response
         
-        with patch('aiohttp.ClientSession.post', return_value=mock_response):
+        mock_post = AsyncMock(return_value=mock_response)
+        
+        with patch('aiohttp.ClientSession.post', mock_post):
             async with aiohttp.ClientSession() as session:
                 result = await client.authenticate(session)
                 assert result == True

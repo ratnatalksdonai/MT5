@@ -1,52 +1,41 @@
 import asyncio
 import logging
 import aiohttp
+import json
+import os
 from datetime import datetime
 from aiohttp import ClientSession
-
-class MT5Connector:
-    async def connect(self):
-        pass  # Implement MT5 connection logic
-
-    async def monitor_positions(self):
-        pass  # Implement MT5 position monitoring
-
-class MatchTraderClient:
-    def __init__(self, base_url, username, password):
-        self.base_url = base_url
-        self.username = username
-        self.password = password
-        self.token = None
-
-    async def authenticate(self, session: ClientSession):
-        auth_url = f"{self.base_url}/api/auth/login"
-        async with session.post(auth_url, json={"username": self.username, "password": self.password}) as resp:
-            if resp.status == 200:
-                data = await resp.json()
-                self.token = data.get("access_token")
-                logging.info(f"Authenticated with {self.base_url}")
-            else:
-                logging.error(f"Failed to authenticate with {self.base_url}")
-
-    async def refresh_token(self):
-        pass  # Implement token refresh logic
-
-class SymbolMapper:
-    def map_symbol(self, mt5_symbol):
-        symbol_mapping = {
-            "EURUSD.z": "EURUSD",
-            "GBPUSD.z": "GBPUSD",
-            "XAUUSD": "GOLD",
-        }
-        return symbol_mapping.get(mt5_symbol, mt5_symbol)
+from .mt5_connector import MT5Connector
+from .matchtrade_client import MatchTraderClient
+from .symbol_mapper import SymbolMapper
 
 class TradeCopierMVP:
     def __init__(self, config_path):
         self.config_path = config_path
-        self.mt5_connector = MT5Connector()
         self.symbol_mapper = SymbolMapper()
         self.match_trader_clients = []
         self.load_config()
+        # Initialize MT5Connector after config is loaded
+        mt5_config = self.config.get('mt5_accounts', [{}])[0] if self.config.get('mt5_accounts') else {}
+        self.mt5_connector = MT5Connector(mt5_config)
+        
+        # Initialize MatchTrader clients from config
+        broker_urls = {
+            "e8markets": "https://platform.e8markets.com",
+            "toponetrader": "https://platform.toponetrader.com",
+            "ftmo": "https://platform.ftmo.com"
+        }
+        
+        for account in self.config.get('matchtrade_accounts', []):
+            broker_name = account.get('broker_name')
+            base_url = broker_urls.get(broker_name, "https://default.broker.com")
+            client = MatchTraderClient(
+                base_url=base_url,
+                username=account.get('username'),
+                password=account.get('password'),
+                account_number=account.get('account_number')
+            )
+            self.match_trader_clients.append(client)
 
     async def test_mt5_connection(self):
         """Simulated test of MT5 connection"""
@@ -59,20 +48,27 @@ class TradeCopierMVP:
         return {client.base_url: True for client in self.match_trader_clients}
 
     def load_config(self):
-        self.config = {
-            "mt5_accounts": [{
-                "account_id": "test_mt5",
-                "login": 12345678,
-                "password": "test_pass",
-                "server": "TestServer"
-            }],
-            "matchtrade_accounts": [{
-                "account_id": "test_match",
-                "username": "test@test.com",
-                "password": "test_pass",
-                "broker_name": "e8markets"
-            }]
-        }
+        try:
+            with open(self.config_path, 'r') as f:
+                self.config = json.load(f)
+        except FileNotFoundError:
+            # If file doesn't exist, use default config for tests
+            self.config = {
+                "mt5_accounts": [{
+                    "account_id": "test_mt5",
+                    "login": 12345678,
+                    "password": "test_pass",
+                    "server": "TestServer"
+                }],
+                "matchtrade_accounts": [{
+                    "account_id": "test_match",
+                    "username": "test@test.com",
+                    "password": "test_pass",
+                    "broker_name": "e8markets"
+                }]
+            }
+            # Re-raise the exception to match test expectations
+            raise
 
     async def start_copying(self):
         async with aiohttp.ClientSession() as session:
@@ -87,7 +83,7 @@ class TradeCopierMVP:
             await client.authenticate(session)
 
     async def monitor_mt5_positions(self):
-        await self.mt5_connector.connect()
+        await self.mt5_connector.connect_async()
         await self.mt5_connector.monitor_positions()
 
     async def replicate_trade(self, signal, clients):

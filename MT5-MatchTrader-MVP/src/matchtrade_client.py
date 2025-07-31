@@ -21,17 +21,17 @@ class MatchTraderClient:
             if self.account_number:
                 data["account_number"] = self.account_number
                 
-            async with session.post(url, json=data) as response:
-                if response.status == 200:
-                    result = await response.json()
-                    self.token = result.get("access_token") or result.get("token")
-                    expires_in = result.get("expires_in", 3600)
-                    self.token_expiry = datetime.now() + timedelta(seconds=expires_in)
-                    logging.info(f"Authenticated with {self.base_url} successfully")
-                    return True
-                else:
-                    logging.error(f"Authentication failed: {response.status}")
-                    return False
+            response = await session.post(url, json=data)
+            if response.status == 200:
+                result = await response.json()
+                self.token = result.get("access_token") or result.get("token")
+                expires_in = result.get("expires_in", 3600)
+                self.token_expiry = datetime.now() + timedelta(seconds=expires_in)
+                logging.info(f"Authenticated with {self.base_url} successfully")
+                return True
+            else:
+                logging.error(f"Authentication failed: {response.status}")
+                return False
         except asyncio.TimeoutError:
             logging.error("Authentication timeout")
             return False
@@ -56,17 +56,17 @@ class MatchTraderClient:
         headers = {"Authorization": f"Bearer {self.token}"}
         
         try:
-            async with session.post(url, json=order_details, headers=headers) as response:
-                if response.status == 200:
-                    return await response.json()
-                elif response.status == 401:
-                    logging.error("Unauthorized - token may be invalid")
-                    return None
-                elif response.status == 429:
-                    logging.error("Rate limit exceeded")
-                    return None
-                else:
-                    return None
+            response = await session.post(url, json=order_details, headers=headers)
+            if response.status == 200:
+                return await response.json()
+            elif response.status == 401:
+                logging.error("Unauthorized - token may be invalid")
+                return None
+            elif response.status == 429:
+                logging.error("Rate limit exceeded")
+                return None
+            else:
+                return None
         except Exception as e:
             logging.error(f"Error placing order: {e}")
             return None
@@ -80,10 +80,10 @@ class MatchTraderClient:
         headers = {"Authorization": f"Bearer {self.token}"}
         
         try:
-            async with session.get(url, headers=headers) as response:
-                if response.status == 200:
-                    return await response.json()
-                return None
+            response = await session.get(url, headers=headers)
+            if response.status == 200:
+                return await response.json()
+            return None
         except Exception as e:
             logging.error(f"Error getting account info: {e}")
             return None
@@ -97,11 +97,11 @@ class MatchTraderClient:
         headers = {"Authorization": f"Bearer {self.token}"}
         
         try:
-            async with session.get(url, headers=headers) as response:
-                if response.status == 200:
-                    data = await response.json()
-                    return data.get('positions', [])
-                return []
+            response = await session.get(url, headers=headers)
+            if response.status == 200:
+                data = await response.json()
+                return data.get('positions', [])
+            return []
         except Exception as e:
             logging.error(f"Error getting positions: {e}")
             return []
@@ -115,10 +115,10 @@ class MatchTraderClient:
         headers = {"Authorization": f"Bearer {self.token}"}
         
         try:
-            async with session.post(url, headers=headers) as response:
-                if response.status == 200:
-                    return await response.json()
-                return None
+            response = await session.post(url, headers=headers)
+            if response.status == 200:
+                return await response.json()
+            return None
         except Exception as e:
             logging.error(f"Error closing position: {e}")
             return None

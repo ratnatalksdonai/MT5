@@ -109,26 +109,28 @@ class TestMT5Connector:
         mock_shutdown.assert_called_once()
     
     # Test 11: Test connection retry on failure
+    @pytest.mark.asyncio
     @patch('MetaTrader5.login')
     @patch('MetaTrader5.initialize')
-    def test_connection_retry(self, mock_initialize, mock_login, mt5_connector):
+    async def test_connection_retry(self, mock_initialize, mock_login, mt5_connector):
         mock_initialize.return_value = True
         mock_login.side_effect = [False, False, True]  # Fail twice, then succeed
         
         mt5_connector.max_retries = 3
-        result = mt5_connector.connect_with_retry()
+        result = await mt5_connector.connect_with_retry()
         assert result == True
         assert mock_login.call_count == 3
     
     # Test 12: Test max retries exceeded
+    @pytest.mark.asyncio
     @patch('MetaTrader5.login')
     @patch('MetaTrader5.initialize')
-    def test_max_retries_exceeded(self, mock_initialize, mock_login, mt5_connector):
+    async def test_max_retries_exceeded(self, mock_initialize, mock_login, mt5_connector):
         mock_initialize.return_value = True
         mock_login.return_value = False
         
         mt5_connector.max_retries = 3
-        result = mt5_connector.connect_with_retry()
+        result = await mt5_connector.connect_with_retry()
         assert result == False
         assert mock_login.call_count == 3
     
@@ -154,7 +156,7 @@ class TestMT5Connector:
         assert info is None
     
     # Test 15: Test position history
-    @patch('MetaTrader5.history_positions_get')
+    @patch('MetaTrader5.history_deals_get')
     def test_get_position_history(self, mock_history, mt5_connector):
         mock_position = Mock()
         mock_position.ticket = 789012
