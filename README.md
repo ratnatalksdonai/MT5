@@ -111,6 +111,6 @@ Automatically copy trades from MetaTrader 5 to MatchTrader prop firm accounts.
 ## Support
 
 For support, please contact:
-- Email: ratna.kirti@example.com
+- Email: ratnakirtiscr@gmail.com
 - LinkedIn: [linkedin.com/in/ratna-kirti](https://www.linkedin.com/in/ratna-kirti/)
 - GitHub Issues: [github.com/ratna3/MT5-MatchTrader-MVP/issues](https://github.com/ratna3/MT5-MatchTrader-MVP/issues)
