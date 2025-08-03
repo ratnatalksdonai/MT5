@@ -1,0 +1,19 @@
+{
+  "mt5_accounts": [
+    {
+      "account_id": "demo_account",
+      "login": "YOUR_MT5_LOGIN",
+      "password": "YOUR_MT5_PASSWORD",
+      "server": "YOUR_MT5_SERVER"
+    }
+  ],
+  "matchtrade_accounts": [
+    {
+      "account_id": "prop_firm_account",
+      "account_number": "YOUR_ACCOUNT_NUMBER",
+      "username": "your_email@example.com",
+      "password": "YOUR_PASSWORD",
+      "broker_name": "citytradersimperium"
+    }
+  ]
+}

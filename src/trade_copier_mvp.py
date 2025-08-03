@@ -1,10 +1,40 @@
+#!/usr/bin/env python3
+"""
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║                     🚀 MT5-MATCHTRADER TRADE COPIER 🚀                       ║
+║                                                                               ║
+║                    Professional Trading Bridge System                         ║
+║                      Engineered by Ratna Kirti (@ratna3)                     ║
+║                                                                               ║
+║  ✨ Features:                                                                  ║
+║  • Real-time position monitoring                                              ║
+║  • Multi-account support                                                      ║
+║  • Secure API integration                                                     ║
+║  • Advanced error handling                                                    ║
+║  • Professional logging                                                       ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+Author: Ratna Kirti
+GitHub: https://github.com/ratna3
+License: MIT
+Version: 1.0.0
+"""
+
 import asyncio
 import logging
-import aiohttp
 import json
 import os
 from datetime import datetime
-from aiohttp import ClientSession
+try:
+    import aiohttp
+    from aiohttp import ClientSession
+except ImportError:
+    # Handle missing aiohttp gracefully for testing
+    aiohttp = None
+    ClientSession = None
+
 from .mt5_connector import MT5Connector
 from .matchtrade_client import MatchTraderClient
 from .symbol_mapper import SymbolMapper
@@ -15,6 +45,13 @@ class TradeCopierMVP:
         self.symbol_mapper = SymbolMapper()
         self.match_trader_clients = []
         self.load_config()
+        
+        # Load trade settings from config
+        trade_settings = self.config.get('trade_settings', {})
+        self.lot_multiplier = trade_settings.get('lot_multiplier', 1.0)
+        self.max_lot_size = trade_settings.get('max_lot_size', 10.0)
+        self.min_lot_size = trade_settings.get('min_lot_size', 0.01)
+        
         # Initialize MT5Connector after config is loaded
         mt5_config = self.config.get('mt5_accounts', [{}])[0] if self.config.get('mt5_accounts') else {}
         self.mt5_connector = MT5Connector(mt5_config)
@@ -28,13 +65,24 @@ class TradeCopierMVP:
         
         for account in self.config.get('matchtrade_accounts', []):
             broker_name = account.get('broker_name')
-            base_url = broker_urls.get(broker_name, "https://default.broker.com")
-            client = MatchTraderClient(
-                base_url=base_url,
-                username=account.get('username'),
-                password=account.get('password'),
-                account_number=account.get('account_number')
-            )
+            
+            # Use specialized TradeLocker client for City Traders Imperium
+            if broker_name == "citytradersimperium":
+                from .tradelocker_client import TradeLockerClient
+                client = TradeLockerClient(
+                    username=account.get('username'),
+                    password=account.get('password'),
+                    account_number=account.get('account_number')
+                )
+            else:
+                # Use generic MatchTrader client for other brokers
+                base_url = broker_urls.get(broker_name, "https://default.broker.com")
+                client = MatchTraderClient(
+                    base_url=base_url,
+                    username=account.get('username'),
+                    password=account.get('password'),
+                    account_number=account.get('account_number')
+                )
             self.match_trader_clients.append(client)
 
     async def test_mt5_connection(self):
@@ -49,6 +97,14 @@ class TradeCopierMVP:
 
     def load_config(self):
         try:
+            # Try to load private config first (with real credentials)
+            private_config_path = self.config_path.replace('.json', '.private.json')
+            if os.path.exists(private_config_path):
+                with open(private_config_path, 'r') as f:
+                    self.config = json.load(f)
+                    return
+            
+            # Fall back to regular config file
             with open(self.config_path, 'r') as f:
                 self.config = json.load(f)
         except FileNotFoundError:

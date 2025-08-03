@@ -20,17 +20,38 @@ class MatchTraderClient:
             data = {"username": self.username, "password": self.password}
             if self.account_number:
                 data["account_number"] = self.account_number
+            
+            # Debug logging
+            logging.info(f"Attempting authentication to: {url}")
+            logging.info(f"Username: {self.username}")
+            logging.info(f"Account number: {self.account_number}")
+            logging.debug(f"Request data: {data}")
                 
             response = await session.post(url, json=data)
+            
+            # Log response details
+            logging.info(f"Response status: {response.status}")
+            try:
+                logging.info(f"Response headers: {dict(response.headers)}")
+            except (TypeError, AttributeError):
+                logging.info("Response headers: <unable to parse>")
+            
             if response.status == 200:
                 result = await response.json()
+                logging.info(f"Response body: {result}")
                 self.token = result.get("access_token") or result.get("token")
                 expires_in = result.get("expires_in", 3600)
                 self.token_expiry = datetime.now() + timedelta(seconds=expires_in)
                 logging.info(f"Authenticated with {self.base_url} successfully")
                 return True
             else:
-                logging.error(f"Authentication failed: {response.status}")
+                # Get response body for debugging
+                try:
+                    error_body = await response.text()
+                    logging.error(f"Authentication failed: {response.status}")
+                    logging.error(f"Error response body: {error_body}")
+                except:
+                    logging.error(f"Authentication failed: {response.status} (could not read response body)")
                 return False
         except asyncio.TimeoutError:
             logging.error("Authentication timeout")

@@ -13,6 +13,8 @@ build/
 
 # Configuration with sensitive data
 config/config.json
+config_mvp.private.json
+*.private.json
 data/
 *.key
 

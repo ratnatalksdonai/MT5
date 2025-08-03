@@ -1,0 +1,34 @@
+{
+  "mt5_accounts": [
+    {
+      "account_id": "gnt_demo",
+      "login": 200374,
+      "password": "C!0wcaa6",
+      "server": "GNTCapital-Demo"
+    }
+  ],
+  "matchtrade_accounts": [
+    {
+      "account_id": "city_traders_imperium",
+      "account_number": "16609",
+      "username": "dparkmit@gmail.com",
+      "password": "Hwr0^u{vz_",
+      "broker_name": "citytradersimperium"
+    }
+  ],
+  "trade_settings": {
+    "lot_multiplier": 1.0,
+    "max_lot_size": 10.0,
+    "min_lot_size": 0.01,
+    "allowed_symbols": ["EURUSD", "GBPUSD", "XAUUSD", "US30"],
+    "enable_notifications": true,
+    "copy_sl_tp": true,
+    "copy_pending_orders": false
+  },
+  "security_settings": {
+    "enable_ssl_verification": true,
+    "api_timeout": 30,
+    "max_retries": 3,
+    "rate_limit_delay": 1.0
+  }
+}
